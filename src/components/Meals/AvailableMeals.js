@@ -9,13 +9,20 @@ import classes from "./AvailableMeals.module.css";
 const AvailableMeals = () => {
 
   const [meals, setMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [] = useState();
+
 
   useEffect(() => {
+    // cannot pass a function to useEffect that returns a promise
+    // must create a new function and use async there, into a nested inner function
     const fetchMeals = async () => {
       const response = await fetch('https://react-movie-faa6c-default-rtdb.firebaseio.com/meals.json').then()
       const responseData = await response.json();
 
       const loadedMeals = [];
+      // responseData will return an object, but we want an 
+      // array, so we transform with loadedMeals
 
       for (const key in responseData) {
         loadedMeals.push({
@@ -23,12 +30,22 @@ const AvailableMeals = () => {
           name: responseData[key].name,
           description: responseData[key].description,
           price: responseData[key].price
+          // transforming the fetched data
         })
       }
       setMeals(loadedMeals)
+      // setting the tranformed data as the array of meals in our useState hook
+      setIsLoading(false);
+      console.log(loadedMeals);
     }
     fetchMeals();
   }, [])
+
+  if (isLoading) {
+    return <section className={classes.mealsLoading}>
+      <p>Loading....</p>
+    </section>
+  }
 
 
   const mealsList = meals.map((meal) => (
